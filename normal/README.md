@@ -18,8 +18,8 @@ JS WEBAPP transfer connections to Mondo and counts it into dbtest/vists.
 
 ##Installation
 git clone https://github.com/espirov/k8s.git
-cd k8s/normal && kubectl apply -f mongo/ -f webapp/
 kubectl create ns normal
+cd k8s/normal && kubectl apply -f mongo/ -f webapp/
 
 ##Check
 #where counts of curl must be equal number that returns db.visits.countDocuments()
