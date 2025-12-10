@@ -17,7 +17,8 @@ Mongo waits connections on 20017 from JS;
 JS WEBAPP transfer connections to Mondo and counts it into dbtest/vists.
 
 ##Installation
-kubectl apply -f mongo/ -f webapp/
+git clone https://github.com/espirov/k8s.git
+cd k8s/normal && kubectl apply -f mongo/ -f webapp/
 
 ##Check
 #where counts of curl must be equal number that returns db.visits.countDocuments()
