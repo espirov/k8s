@@ -1,0 +1,48 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapp
+  namespace: normal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webapp
+  template:
+    metadata:
+      labels:
+        app: webapp
+    spec:
+      initContainers:
+      - name: install-deps
+        image: node:18
+        command: ["sh", "-c"]
+        args:
+        - |
+          cp /src/* /app/
+          cd /app
+          npm install
+        volumeMounts:
+        - name: src
+          mountPath: /src
+        - name: app
+          mountPath: /app
+
+      containers:
+      - name: webapp
+        image: node:18
+        command: ["node"]
+        args: ["/app/app.js"]
+        ports:
+        - containerPort: 3000
+        volumeMounts:
+        - name: app
+          mountPath: /app
+
+      volumes:
+      - name: src
+        configMap:
+          name: webapp-code
+      - name: app
+        emptyDir: {}

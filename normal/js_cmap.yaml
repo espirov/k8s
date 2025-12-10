@@ -1,0 +1,40 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: webapp-code
+  namespace: normal
+data:
+  package.json: |
+    {
+      "name": "webapp",
+      "version": "1.0.0",
+      "main": "app.js",
+      "dependencies": {
+        "express": "^4.18.2",
+        "mongodb": "^6.3.0"
+      }
+    }
+  app.js: |
+    const express = require('express');
+    const { MongoClient } = require("mongodb");
+
+    const app = express();
+    const url = "mongodb://root:example@mongodb.normal.svc.cluster.local:27017";
+    const client = new MongoClient(url);
+
+    app.get('/', async (req, res) => {
+      try {
+        await client.connect();
+        const db = client.db("testdb");
+        const collection = db.collection("visits");
+        await collection.insertOne({ ts: new Date() });
+
+        const count = await collection.countDocuments();
+        res.send(`Connected to MongoDB. Total visits: ${count}`);
+      } catch (e) {
+        res.send("Mongo error: " + e.toString());
+      }
+    });
+
+    app.listen(3000, () => console.log("Webapp running on port 3000"));
